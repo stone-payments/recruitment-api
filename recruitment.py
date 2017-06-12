@@ -1,4 +1,7 @@
 from flask import Flask
+from subprocess import call
+import json
+from pyexcel_xlsx import get_data
 
 app = Flask(__name__)
 
@@ -9,8 +12,9 @@ def hello_world():
 
 @app.route('/candidates', methods=['GET'])
 def get_candidates():
-    return '<h1>HUE BR</h1>'
+    data = get_data("xlsx/candidates.xlsx")
+    return json.dumps(data)
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
