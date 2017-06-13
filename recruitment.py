@@ -1,8 +1,5 @@
 from flask import Flask, jsonify
-from subprocess import call
 import xlrd
-import json
-from pyexcel_xlsx import get_data
 
 from model.candidate import Candidate
 
@@ -17,7 +14,7 @@ def hello_world():
 @app.route('/recruitment/<edition>/candidates', methods=['GET'])
 def get_candidates(edition):
     try:
-        workbook = xlrd.open_workbook('xlsx/{0}.xlsx'.format(edition), on_demand=True)
+        workbook = xlrd.open_workbook('https://stone-recruitment-api.herokuapp.com/xlsx/{0}.xlsx'.format(edition), on_demand=True)
         worksheet = workbook.sheet_by_index(0)
         first_row = []  # Header
         for col in range(worksheet.ncols):
@@ -49,7 +46,6 @@ def get_candidates(edition):
         return jsonify(success=False, message="Database not connected"), 200
     except:
         return jsonify(success=False, message="Ooops..."), 200
-
 
 
 @app.errorhandler(404)
