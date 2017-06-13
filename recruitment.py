@@ -13,7 +13,7 @@ def hello_world():
 
 @app.route('/file')
 def file():
-    my_file = Path("~/stone-recruitment-api/xlsx/candidates.xlsx")
+    my_file = Path("app/xlsx/candidates.xlsx")
     return jsonify(success=my_file.is_file()), 200
 
 @app.route('/recruitment/<edition>/candidates', methods=['GET'])
