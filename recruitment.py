@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from pathlib import Path
 import xlrd
 
 from model.candidate import Candidate
@@ -10,6 +11,10 @@ app = Flask(__name__)
 def hello_world():
     return 'Victoper, so faz o GET da api loka ae, bora bora'
 
+@app.route('/file')
+def file():
+    my_file = Path("~/stone-recruitment-api/xlsx/candidates.xlsx")
+    return jsonify(success=my_file.is_file()), 200
 
 @app.route('/recruitment/<edition>/candidates', methods=['GET'])
 def get_candidates(edition):
@@ -23,7 +28,7 @@ def get_candidates(edition):
             name = worksheet.cell_value(row, 1)
             email = worksheet.cell_value(row, 4)
             mobile_phone = str(worksheet.cell_value(row, 5)).replace(".0", "").replace("(", "") \
-                .replace(")", "").replace(" ", "").replace("-", "")
+                                                            .replace(")", "").replace(" ", "").replace("-", "")
             cultural_fit = worksheet.cell_value(row, 8)
             logic_test = float(worksheet.cell_value(row, 9))
             college = worksheet.cell_value(row, 10)
