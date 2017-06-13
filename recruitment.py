@@ -14,11 +14,9 @@ def hello_world():
 @app.route('/recruitment/<edition>/candidates', methods=['GET'])
 def get_candidates(edition):
     try:
-        workbook = xlrd.open_workbook('https://stone-recruitment-api.herokuapp.com/xlsx/{0}.xlsx'.format(edition), on_demand=True)
+        workbook = xlrd.open_workbook('~/xlsx/{0}.xlsx'.format(edition), on_demand=True)
         worksheet = workbook.sheet_by_index(0)
-        first_row = []  # Header
-        for col in range(worksheet.ncols):
-            first_row.append(worksheet.cell_value(0, col))
+
         # tronsform the workbook to a list of dictionnaries
         data = []
         for row in range(1, worksheet.nrows):
