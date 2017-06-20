@@ -3,3 +3,4 @@ gunicorn==19.6.0
 flask==0.10.1
 openpyxl==2.4.8
 xlrd==0.9.4
+flask-cors==3.0.2

@@ -1,10 +1,12 @@
 from flask import Flask, jsonify
-from pathlib import Path
+from flask.ext.cors import CORS, cross_origin
 import xlrd
 
 from model.candidate import Candidate
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 @app.route('/')
@@ -13,6 +15,7 @@ def hello_world():
 
 
 @app.route('/recruitment/<edition>/candidates', methods=['GET'])
+@cross_origin()
 def get_candidates(edition):
     try:
         workbook = xlrd.open_workbook('xlsx/{0}.xlsx'.format(edition), on_demand=True)
