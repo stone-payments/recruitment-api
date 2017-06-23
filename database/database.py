@@ -36,12 +36,16 @@ class ApplicationDao(Dao):
             candidate_database = self.get_database()
             collection = candidate_database.candidates
 
+            # check if collection already exist
+            if excel_name in candidate_database.collection_names():
+                return True
+
+
             workbook = ExcelReader().read_file(excel_name)
             worksheet = workbook.sheet_by_index(0)
             event = excel_name
 
             # excel columns
-            data = []
             for row in range(1, worksheet.nrows):
                 name = worksheet.cell_value(row, COLUMN_NAME)
                 email = worksheet.cell_value(row, COLUMN_EMAIL)
