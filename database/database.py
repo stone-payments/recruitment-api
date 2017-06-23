@@ -32,17 +32,20 @@ class Dao:
 
 
 class ApplicationDao(Dao):
+
     def get_database(self):
         return self.client['stone-recruitment']
+
+    def get_candidate_collection(self):
+        self.connect()
+        candidate_database = self.get_database()
+        return candidate_database.candidate
 
     def parse_excel_to_sql(self, excel_name):
 
         try:
 
-            self.connect()
-
-            candidate_database = self.get_database()
-            collection = candidate_database.candidate
+            collection = self.get_candidate_collection()
 
             one_by_event = collection.find_one({"event": excel_name})
 
@@ -58,8 +61,11 @@ class ApplicationDao(Dao):
             for row in range(1, worksheet.nrows):
                 name = worksheet.cell_value(row, COLUMN_NAME)
                 email = worksheet.cell_value(row, COLUMN_EMAIL)
-                mobile_phone = str(worksheet.cell_value(row, COLUMN_MOBILE_PHONE)).replace(".0", "").replace("(", "") \
-                    .replace(")", "").replace(" ", "").replace("-", "")
+                mobile_phone = str(worksheet.cell_value(row, COLUMN_MOBILE_PHONE)).replace(".0", "")\
+                                                                                  .replace("(", "")\
+                                                                                  .replace(")", "")\
+                                                                                  .replace(" ", "")\
+                                                                                  .replace("-", "")
                 cultural_fit = worksheet.cell_value(row, COLUMN_CULTURAL_FIT)
                 logic_test = float(worksheet.cell_value(row, COLUMN_LOGIC_TEST))
                 college = worksheet.cell_value(row, COLUMN_COLLEGE)
@@ -85,10 +91,7 @@ class ApplicationDao(Dao):
     def select_all(self, excel_name):
         try:
 
-            self.connect()
-
-            candidate_database = self.get_database()
-            collection = candidate_database.candidate
+            collection = self.get_candidate_collection()
 
             result = []
             for item in collection.find({"event": excel_name}):
@@ -100,3 +103,34 @@ class ApplicationDao(Dao):
             return result, 200, True
         except Exception:
             return None, 200, False
+
+    def find_candidate_by_email(self, event, email):
+        try:
+
+            collection = self.get_candidate_collection()
+            result = collection.find_one({"event": event, "email" : email})
+            result.pop('_id')
+
+            self.close_connection()
+
+            return result, 200, True
+        except:
+            return None, 200, False
+
+    def update_present(self, event, email, is_present):
+        try:
+
+            collection = self.get_candidate_collection()
+
+            if collection.find_one({"event": event, "email": email}):
+                result = collection.update_one({"event": event, "email": email}, {'$set': {
+                                                                                    'is_present': is_present
+                                                                                  }}, upsert=False)
+                self.close_connection()
+
+                return True, 200
+            else:
+                return False, 200
+        except:
+            return False, 200
+

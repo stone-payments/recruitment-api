@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask.ext.cors import CORS, cross_origin
 
 from database.database import ApplicationDao
@@ -17,6 +17,21 @@ SERVICE_UNAVAILABLE = 503
 @app.route('/')
 def hello_world():
     return 'Victoper, so faz o GET da api loka ae, bora bora'
+
+
+@app.route('/recruitment/<edition>/find/<email>', methods=['GET'])
+@cross_origin()
+def get_find_candidate(edition, email):
+    user, http_status, success = ApplicationDao().find_candidate_by_email(edition, email)
+    return jsonify(success=success, user=user), http_status
+
+
+@app.route('/recruitment/<edition>/present', methods=['POST'])
+@cross_origin()
+def post_update_present(edition):
+    data = request.get_json()
+    success, http_status = ApplicationDao().update_present(edition, data['email'], data['is_present'])
+    return jsonify(success=success), http_status
 
 
 @app.route('/recruitment/<edition>/migrate', methods=['GET'])
