@@ -20,48 +20,20 @@ SERVICE_UNAVAILABLE = 503
 def hello_world():
     return 'Victoper, so faz o GET da api loka ae, bora bora'
 
+
 @app.route('/recruitment/<edition>/migrate', methods=['GET'])
 @cross_origin()
 def get_migrate(edition):
-    if ApplicationDao().parse_excel_to_sql(edition):
-        return jsonify(success=True, message="Migration done!"), CREATED
-    else:
-        return jsonify(success=False, message="Migration failed"), OK
+    message, http_status, success = ApplicationDao().parse_excel_to_sql(edition)
+    return jsonify(success=success, message=message.value), http_status
 
 
 @app.route('/recruitment/<edition>/candidates', methods=['GET'])
 @cross_origin()
 def get_candidates(edition):
-    try:
-        workbook = xlrd.open_workbook('xlsx/{0}.xlsx'.format(edition), on_demand=True)
-        worksheet = workbook.sheet_by_index(0)
+    result, http_status, success = ApplicationDao().select_all(edition)
+    return jsonify(success=success, message=None, result=result), http_status
 
-        # tronsform the workbook to a list of dictionnaries
-        data = []
-        for row in range(1, worksheet.nrows):
-            name = worksheet.cell_value(row, 1)
-            email = worksheet.cell_value(row, 4)
-            mobile_phone = str(worksheet.cell_value(row, 5)).replace(".0", "").replace("(", "") \
-                .replace(")", "").replace(" ", "").replace("-", "")
-            cultural_fit = worksheet.cell_value(row, 8)
-            logic_test = float(worksheet.cell_value(row, 9))
-            college = worksheet.cell_value(row, 10)
-            graduation = worksheet.cell_value(row, 11)
-
-            candidate = Candidate(name=name,
-                                  email=email,
-                                  mobile_phone=mobile_phone,
-                                  cultural_fit=cultural_fit,
-                                  logic_test=logic_test,
-                                  college=college,
-                                  graduation=graduation)
-            data.append(candidate.__dict__)
-
-        return jsonify(success=True, message="All candidates", candidates=data), OK
-    except FileNotFoundError:
-        return jsonify(success=False, message="Database not connected"), OK
-    except:
-        return jsonify(success=False, message="Ooops..."), OK
 
 # Error handlers
 @app.errorhandler(NOT_FOUND)

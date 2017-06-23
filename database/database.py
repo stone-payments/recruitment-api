@@ -1,7 +1,12 @@
+from enum import Enum
+
 from pymongo import MongoClient
+from bson.json_util import dumps
 
 from excel import ExcelReader
 from model.candidate import Candidate
+from bson.objectid import ObjectId
+import json
 
 # excel columns
 COLUMN_NAME = 1
@@ -13,8 +18,21 @@ COLUMN_COLLEGE = 10
 COLUMN_GRADUATION = 11
 
 
-class Dao:
+class Encoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        else:
+            return obj
 
+
+class DatabaseStatus(Enum):
+    DONE = 'Done!'
+    ALREADY_DONE = 'Already done!'
+    FAILED = 'Failed!'
+
+
+class Dao:
     def connect(self):
         self.client = MongoClient('localhost', 27017)
 
@@ -23,7 +41,6 @@ class Dao:
 
 
 class ApplicationDao(Dao):
-
     def get_database(self):
         return self.client['stone-recruitment']
 
@@ -34,12 +51,13 @@ class ApplicationDao(Dao):
             self.connect()
 
             candidate_database = self.get_database()
-            collection = candidate_database.candidates
+            collection = candidate_database.candidate
+
+            one_by_event = collection.find_one({"event": excel_name})
 
             # check if collection already exist
-            if excel_name in candidate_database.collection_names():
-                return True
-
+            if one_by_event and excel_name == collection.find_one({"event": excel_name})['event']:
+                return DatabaseStatus.ALREADY_DONE, 200, True
 
             workbook = ExcelReader().read_file(excel_name)
             worksheet = workbook.sheet_by_index(0)
@@ -69,6 +87,25 @@ class ApplicationDao(Dao):
 
             self.close_connection()
 
-            return True
+            return DatabaseStatus.DONE, 201, True
         except Exception:
-            return False
+            return DatabaseStatus.FAILED, 200, False
+
+    def select_all(self, excel_name):
+        try:
+
+            self.connect()
+
+            candidate_database = self.get_database()
+            collection = candidate_database.candidate
+
+            result = []
+            for item in collection.find({"event": excel_name}):
+                item.pop('_id') # remove ObjectId to serialize
+                result.append(item)
+
+            self.close_connection()
+
+            return result, 200, True
+        except Exception:
+            return None, 200, False
