@@ -97,6 +97,8 @@ class ApplicationDao(Dao):
             result = []
             for item in collection.find({"event": excel_name}):
                 item.pop('_id')  # remove ObjectId to serialize
+                item.pop('is_present')
+                item.pop('event')
                 result.append(item)
 
             self.close_connection()
