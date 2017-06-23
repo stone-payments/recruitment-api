@@ -124,9 +124,10 @@ class ApplicationDao(Dao):
             collection = self.get_candidate_collection()
 
             if collection.find_one({"event": event, "email": email}):
-                result = collection.update_one({"event": event, "email": email}, {'$set': {
-                                                                                    'is_present': is_present
-                                                                                  }}, upsert=False)
+
+                collection.update_one({"event": event, "email": email},
+                                      {'$set': {'is_present': is_present}},
+                                      upsert=False)
                 self.close_connection()
 
                 return True, 200
