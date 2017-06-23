@@ -1,7 +1,6 @@
 from enum import Enum
 
 from pymongo import MongoClient
-from bson.json_util import dumps
 
 from excel import ExcelReader
 from model.candidate import Candidate
@@ -16,14 +15,6 @@ COLUMN_CULTURAL_FIT = 8
 COLUMN_LOGIC_TEST = 9
 COLUMN_COLLEGE = 10
 COLUMN_GRADUATION = 11
-
-
-class Encoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, ObjectId):
-            return str(obj)
-        else:
-            return obj
 
 
 class DatabaseStatus(Enum):
@@ -101,7 +92,7 @@ class ApplicationDao(Dao):
 
             result = []
             for item in collection.find({"event": excel_name}):
-                item.pop('_id') # remove ObjectId to serialize
+                item.pop('_id')  # remove ObjectId to serialize
                 result.append(item)
 
             self.close_connection()

@@ -1,9 +1,7 @@
 from flask import Flask, jsonify
 from flask.ext.cors import CORS, cross_origin
-import xlrd
 
 from database.database import ApplicationDao
-from model.candidate import Candidate
 
 app = Flask(__name__)
 cors = CORS(app)
