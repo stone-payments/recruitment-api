@@ -25,7 +25,8 @@ class DatabaseStatus(Enum):
 
 class Dao:
     def connect(self):
-        self.client = MongoClient('localhost', 27017)
+        # self.client = MongoClient('localhost', 27017)
+        self.client = MongoClient('mongodb://jgabrielfreitas:Y5W-FGt-98v-u7a@ds133932.mlab.com:33932/stone-recruitment')
 
     def close_connection(self):
         self.client.close()
