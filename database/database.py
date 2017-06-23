@@ -1,4 +1,5 @@
 from enum import Enum
+import os
 
 from pymongo import MongoClient
 
@@ -26,7 +27,7 @@ class DatabaseStatus(Enum):
 class Dao:
     def connect(self):
         # self.client = MongoClient('localhost', 27017)
-        self.client = MongoClient('mongodb://jgabrielfreitas:Y5W-FGt-98v-u7a@ds133932.mlab.com:33932/stone-recruitment')
+        self.client = MongoClient(os.environ['MONGO'])
 
     def close_connection(self):
         self.client.close()
