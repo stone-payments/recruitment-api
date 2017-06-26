@@ -33,7 +33,7 @@ def post_update_present(edition):
 @cross_origin()
 def get_candidates(edition):
     result, http_status, success = ApplicationDao().select_all(edition)
-    return jsonify(success=success, message=None, result=result), http_status
+    return jsonify(success=success, result=result), http_status
 
 
 # Error handlers
