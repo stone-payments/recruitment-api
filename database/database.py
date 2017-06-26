@@ -1,12 +1,7 @@
-from enum import Enum
 import os
+from enum import Enum
 
 from pymongo import MongoClient
-
-from excel import ExcelReader
-from model.candidate import Candidate
-from bson.objectid import ObjectId
-import json
 
 # excel columns
 COLUMN_NAME = 1
