@@ -43,53 +43,6 @@ class ApplicationDao(Dao):
         candidate_database = self.get_database()
         return candidate_database.candidate
 
-    def parse_excel_to_sql(self, excel_name):
-
-        try:
-
-            collection = self.get_candidate_collection()
-
-            one_by_event = collection.find_one({"event": excel_name})
-
-            # check if collection already exist
-            if one_by_event and excel_name == collection.find_one({"event": excel_name})['event']:
-                return DatabaseStatus.ALREADY_DONE, 200, True
-
-            workbook = ExcelReader().read_file(excel_name)
-            worksheet = workbook.sheet_by_index(0)
-            event = excel_name
-
-            # excel columns
-            for row in range(1, worksheet.nrows):
-                name = worksheet.cell_value(row, COLUMN_NAME)
-                email = worksheet.cell_value(row, COLUMN_EMAIL)
-                mobile_phone = str(worksheet.cell_value(row, COLUMN_MOBILE_PHONE)).replace(".0", "")\
-                                                                                  .replace("(", "")\
-                                                                                  .replace(")", "")\
-                                                                                  .replace(" ", "")\
-                                                                                  .replace("-", "")
-                cultural_fit = worksheet.cell_value(row, COLUMN_CULTURAL_FIT)
-                logic_test = float(worksheet.cell_value(row, COLUMN_LOGIC_TEST))
-                college = worksheet.cell_value(row, COLUMN_COLLEGE)
-                graduation = worksheet.cell_value(row, COLUMN_GRADUATION)
-
-                candidate = Candidate(name=name,
-                                      email=email,
-                                      mobile_phone=mobile_phone,
-                                      cultural_fit=cultural_fit,
-                                      logic_test=logic_test,
-                                      college=college,
-                                      graduation=graduation,
-                                      event=event)
-
-                collection.insert(candidate.__dict__)
-
-            self.close_connection()
-
-            return DatabaseStatus.DONE, 201, True
-        except Exception:
-            return DatabaseStatus.FAILED, 200, False
-
     def select_all(self, excel_name):
         try:
 
