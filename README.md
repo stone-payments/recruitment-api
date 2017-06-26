@@ -1,7 +1,7 @@
 # API de Recrutamento
 Api utilizada nas soluções do Recruta Arpex e dinâmicas do RC
 
-# `GET` - Busca candidato
+### `GET` - Busca candidato
 `{{host}}/recruitment/<EVENTO>/find/<EMAIL_DO_CANDIDATO>`
 > Busca dados de um determinado candiadato por evento
 
@@ -23,15 +23,15 @@ Api utilizada nas soluções do Recruta Arpex e dinâmicas do RC
 }
 ```
 
-# `POST` - Atualiza a presença
+### `POST` - Atualiza a presença
 `{{host}}/recruitment/<EVENTO>/find/<EMAIL_DO_CANDIDATO>`
 > Atualiza a presença do candidato no evento, para criação dos grupos
 
 * Request
 ```json
 {
-	"email":"lucashippertt@id.uff.br",
-	"is_present": false
+  "email":"lucashippertt@id.uff.br",
+  "is_present": false
 }
 ```
 
