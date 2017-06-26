@@ -14,11 +14,6 @@ INTERNAL_SERVER_ERROR = 500
 SERVICE_UNAVAILABLE = 503
 
 
-@app.route('/')
-def hello_world():
-    return 'Victoper, so faz o GET da api loka ae, bora bora'
-
-
 @app.route('/recruitment/<edition>/find/<email>', methods=['GET'])
 @cross_origin()
 def get_find_candidate(edition, email):
