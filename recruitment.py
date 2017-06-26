@@ -29,13 +29,6 @@ def post_update_present(edition):
     return jsonify(success=success), http_status
 
 
-@app.route('/recruitment/<edition>/migrate', methods=['GET'])
-@cross_origin()
-def get_migrate(edition):
-    message, http_status, success = ApplicationDao().parse_excel_to_sql(edition)
-    return jsonify(success=success, message=message.value), http_status
-
-
 @app.route('/recruitment/<edition>/candidates', methods=['GET'])
 @cross_origin()
 def get_candidates(edition):
